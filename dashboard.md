@@ -1,6 +1,10 @@
 # Johdanto
 
-Idea on saada kokonaan toimiva dashboard.
+Kokonaan idea lähti toisen henkilön tekemästä projektista, mutta ongelma oli se, että tällä hetkellä ei ole Rasperry PI:tä ja projektiin liittyviä oheistuotteita, [Now Playing: My Raspberry Pi Weekend Project](https://chorus.fm/features/articles/now-playing-my-raspberry-pi-weekend-project/) . Projektissa on luotu vagrant ympäristö, debian/bookworm64 ja salt-master ja 2 salt-minion konetta, flask, python.
+
+Kyseisen projektin idea on näyttää flaskin kautta nettisivu missä näkyy mitä tällä hetkellä kuuntelen spotifyssa, ja myös yrittää saada salt minion lisäämään tämänhetkisen sään samalle, nettisivustolle.
+
+
 
 
 ## Vagrant
@@ -168,7 +172,7 @@ def currently_playing():
 if __name__ == '__main__':
     app.run(debug=True)
  ```
-Tämän jälkeen päätin tehdä yksinkertaisen etusivun flaskille,
+Tämän jälkeen päätin tehdä etusivun flaskille,
 
 - `mkdir templates`
 - `nano templates/index.html`
@@ -235,3 +239,182 @@ config.vm.define "tmaster", primary: true do |tmaster|
 
     tmaster.vm.network "forwarded_port", guest: 5000, host: 5000  ◀️ #Lisätty portti
 ```
+Tämän jälkeen piti tottakai käynnistää kone uudeelleen, jotta uusi asetus astuu voimaan,
+- `exit`
+- `vagrant reload tmaster`
+- `vagrant ssh tmaster`
+- `cd ~/spotify-flask-app`
+- `source venv/bin/activate`
+
+Ensimmäinen ajo näytti tältä ja juuri se mitä haluttiin 💀💀💀💀💀💀💀
+![image](https://github.com/user-attachments/assets/2139571e-60f2-43fe-9b3a-b092bbd35657)
+
+
+- `sudoedit app.py`
+Tässä vaiheessa laitoin koodin pätkän chat.gpt:lle ja gpt antoi vaustaukseksi
+![image](https://github.com/user-attachments/assets/97c7e682-cee7-4d4c-9c78-07c88a7797c2)
+
+
+Koodia muokattu
+
+- Toinen ajo näytti tältä, mutta kumminkin jotain oli vielä pielessä, sillä kyseinen ei näyttänyt siltä miltä halusin.
+![image](https://github.com/user-attachments/assets/06cd4b2b-e746-48dc-805c-1ff3be0153eb)
+
+Takaisin muokkaamaan koodia, tämän jälkeen koodit menivät aivan uusiksi tokenit yms olivat niin jumissa, että sisään ei päässyt molemmat koodit lyöty chat.gpt ja muokkaukset tehty.
+
+- app.py tiedosto
+```yaml
+from flask import Flask, redirect, request, session, jsonify, render_template
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
+
+app = Flask(__name__)
+app.secret_key = os.urandom(24)
+
+
+SCOPE = 'user-read-currently-playing user-read-playback-state'
+
+sp_oauth = SpotifyOAuth(
+    scope=SCOPE,
+    client_id=os.getenv("SPOTIPY_CLIENT_ID"),
+    client_secret=os.getenv("SPOTIPY_CLIENT_SECRET"),
+    redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI"),
+    show_dialog=True,
+    cache_path=".cache"
+)
+
+@app.route('/')
+def login():
+    auth_url = sp_oauth.get_authorize_url()
+    return redirect(auth_url)
+
+@app.route('/callback')
+def callback():
+    code = request.args.get('code')
+    token_info = sp_oauth.get_access_token(code)
+    session['token_info'] = token_info
+    return redirect('/player')
+
+@app.route('/player')
+def player():
+    return render_template('index.html')
+
+@app.route('/currently-playing')
+def currently_playing():
+    token_info = session.get('token_info', None)
+    if not token_info:
+        return redirect('/')
+
+    if sp_oauth.is_token_expired(token_info):
+                token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
+        session['token_info'] = token_info
+
+    try:
+        sp = spotipy.Spotify(auth=token_info['access_token'])
+        current = sp.current_playback()
+
+        if current and current.get('is_playing'):
+            data = {
+                'track': current['item']['name'],
+                'artist': current['item']['artists'][0]['name'],
+                'album': current['item']['album']['name'],
+                'image': current['item']['album']['images'][0]['url'],
+                'is_playing': True
+            }
+            return jsonify(data)
+
+        return jsonify({'message': 'Nothing playing', 'is_playing': False})
+
+    except spotipy.exceptions.SpotifyException as e:
+        return f"Spotify API error: {e}", 401
+
+if __name__ == '__main__':
+    app.run(debug=True, host="0.0.0.0")
+```
+
+- index.html
+```yaml
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Spotify Currently Playing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 60px;
+        }
+        #cover {
+            width: 300px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 Nyt soi Spotifyssa</h1>
+    <div id="track-info">
+        <img id="cover" src="" alt="Album Cover">
+        <h2 id="song">Ladataan...</h2>
+        <p id="artist"></p>
+    </div>
+
+    <script>
+        async function fetchTrack() {
+            try {
+                const response = await fetch('/currently-playing');
+                const data = await response.json();
+
+                if (data.is_playing) {
+                    document.getElementById('cover').src = data.image;
+                    document.getElementById('song').textContent = data.track;
+                    document.getElementById('artist').textContent = data.artist;
+                } else {
+                    document.getElementById('song').textContent = "Ei soittoa juuri nyt 🎧";
+                    document.getElementById('artist').textContent = "";
+                    document.getElementById('cover').src = "";
+                }
+            } catch (error) {
+                console.error('Virhe noudettaessa kappaletta:', error);
+            }
+        }
+
+        setInterval(fetchTrack, 5000);
+        fetchTrack();
+ </script>
+</body>
+</html>
+```
+
+Kokeilin uusiksi komentoa
+- `flask run --host=0.0.0.0`
+- ja menin osoitteeseen `http://localhost:5000/`
+
+  ![image](https://github.com/user-attachments/assets/7ee2fd01-1ad1-47b5-9979-0008db84351e)
+  - Hyväksynnän jälkeen sain viimeinkin näkyviin sellaisen mitä odotinkin
+    
+  ![image](https://github.com/user-attachments/assets/ef56debe-090d-4e04-8f8b-086f47c99313)
+
+Kyseinen idea on vain näyttää, että mikä kappale soi spotifyssa ja albumin kuva, biisi sekä artisti.
+- Web player spotify - Toimii
+- Pelkkä sovellus - Toimii
+Yllä olevat kiinni, tehtävien hallinnasta spotify kokonaan pois päältä
+- Puhelin Spotify sovellus Wifi yhteydellä - Toimii
+- Puhelin Spotify sovellus pelkällä mobiili yhteydellä - Toimii 
+
+
+## Weather API & Salt Minion
+
+Ensimmäiseksi piti saada avain [OpenWeather](https://openweathermap.org/api) 
+- [Open Weather nettisivu](https://openweathermap.org/api)
+- Tilin tekeminen
+- Oma tili -> My Api Keys
+- Tein uuden avaimen kokonaan
+- ![image](https://github.com/user-attachments/assets/a724b9c0-fb14-4526-a927-b7b3d85cbd48)
+
+  
