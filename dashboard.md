@@ -408,13 +408,147 @@ Yllä olevat kiinni, tehtävien hallinnasta spotify kokonaan pois päältä
 - Puhelin Spotify sovellus pelkällä mobiili yhteydellä - Toimii 
 
 
-## Weather API & Salt Minion
+## Weather API & Salt Minion   
+
+[Weather Forecast App using Python (Flask) and the OpenWeather API ☀️- Project 13](https://medium.com/@wojtekszczerbinski/project-13-weather-forecast-app-using-python-flask-and-the-openweather-api-%EF%B8%8F-746a49cde95a)
 
 Ensimmäiseksi piti saada avain [OpenWeather](https://openweathermap.org/api) 
 - [Open Weather nettisivu](https://openweathermap.org/api)
 - Tilin tekeminen
 - Oma tili -> My Api Keys
-- Tein uuden avaimen kokonaan
+- Tein uuden avaimen kokonaan,
 - ![image](https://github.com/user-attachments/assets/a724b9c0-fb14-4526-a927-b7b3d85cbd48)
+- Avain talteen
 
+
+Näiden jälkeen avasin komento kehotteen ja otin yhteyden ssh data-collector-1 koneelle
+- `vagrant shh data-collector-1`
+
+Tämän jälkeen oli aika alkaa rakentaa weather apia flaskiin
+- `mkdir weather-api`
+- `cd weather-api`
+- `sudo apt install python3.11-venv`
+- `python3 -m venv venv`
+- `source venv/bin/activate`
+- `pip install flask flask-cors requests`
+- `nano .env` nanoon tulee sisälle API avain mikä on otettu talteen openWeather sivustolta.
+- ![image](https://github.com/user-attachments/assets/8dc92a27-23d5-4e84-b542-9c327dc321a4)
+- `nano weather_api.py`
+
+- weather_api.py sisältö
+```yaml
+from flask import Flask, jsonify
+from flask_cors import CORS
+from dotenv import load_dotenv
+import requests, os
+
+load_dotenv()
+
+app = Flask(__name__)
+CORS(app)
+
+@app.route('/weather')
+def weather():
+    city = "Helsinki"
+    api_key = os.getenv("OPENWEATHER_API_KEY")
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
+
+    response = requests.get(url)
+    data = response.json()
+
+    return jsonify({
+        "city": city,
+        "temp": data["main"]["temp"],
+        "description": data["weather"][0]["description"]
+    })
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5050)
+
+```
   
+Tallennuksen jälkeen, oli aika käynnistää palvelu ja kokeilla toimiiko se edes,
+- `source venv/bin/activate`
+- `pip install python-dotenv`
+- `python weather_api.py`
+- Menin data-collector-1 osoitteeseen ja sain datan näkyviin, mutta kyseinen oli tylsä
+- ![image](https://github.com/user-attachments/assets/0a5ed853-e12a-485b-b5db-e6ff3c2ad87d)
+
+
+Data tuli näkyviin se oli tässä vaiheessa tärkeintä, seuraava vaihe oli saada 2 palikkaa yhdeksi torniksi, eli onko mahdollista saada, spotify mikä on tmasterilla, ja weather api samalle sivustolle vaikka molemmat tulevat eri porteista ja eri koneet keräävät dataa.
+
+## Loppuhuipennus
+
+Yhteys tmaster koneelle, 
+- `vagrant ssh tmaster`
+- `cd spotify-flask-app/templates`
+- `nano index.html`
+- Index html koodiin lisätty
+
+```yaml
+<div id="weather" style="margin-top: 30px; text-align: center;">
+  <h3>🌤 Sää Helsingissä</h3>
+  <p id="weather-data">Ladataan säätietoja...</p>
+</div>
+
+<script>
+  fetch("http://192.168.12.101:5050/weather")
+    .then(response => response.json())
+    .then(data => {
+      const weatherText = `🌡 ${data.temp} °C – ${data.description}`;
+      document.getElementById("weather-data").innerText = weatherText;
+    })
+    .catch(error => {
+      document.getElementById("weather-data").innerText = "Säätietojen haku epäonnistui.";
+      console.error(error);
+    });
+</script>
+
+```
+- Tallenuksen jälkeen
+- `cd ..`
+- `source venv/bin/activate`
+- `python app.py`
+- avasin myös toisen komento kehotteen ja `vagrant ssh data-collector-1`
+- `source venv/bin/activate`
+- `python weather_api.py`
+- palvelut oli nyt laitettu käyntiin, sormet ristissä osoitteeseen, `http://127.0.0.1:5000/`
+  
+![image](https://github.com/user-attachments/assets/c8429538-9a98-4980-af29-4abfe938c4d4)
+
+- palvelut näkyivät osoitteessa, kumminkin nyt oli aika tehdä salt sen mukaiseksi, että pystyn automaattisesti salt-masterilla käynnistämään palvelun ilman, että menen kyseiselle koneelle tekemään manuaalisesti itse.
+
+- tmasterilla kokeiltu komennolla
+- `sudo salt 'keraaja1' cmd.run \ "bash -c 'cd /home/vagrant/weather-api && source venv/bin/activate && nohup python weather_api.py > out.log 2>&1 &'" `
+- Salt-masterilla sain käynnistettyä weather apin.
+- ![image](https://github.com/user-attachments/assets/222ac134-3b39-45a4-bac9-844ff965c64c)
+
+- prosessi lopetettu komennolla
+- `sudo salt 'keraaja1' cmd.run "pkill -f weather_api.py"`
+
+Kun tiesin, että sain salt-masterilla kyseinen toiminaan oli aika tehdä sls tiedosto
+- `sudo mkdir -p /srv/salt/states`
+- `sudo nano weather_api.sls`
+```yaml
+start-weather-api:
+  cmd.run:
+    - name: 'cd /home/vagrant/weather-api && source venv/bin/activate && nohup python weather_api.py > out.log 2>&1 &'
+    - unless: 'pgrep -f weather_api.py'
+    - user: vagrant
+    - cwd: /home/vagrant/weather-api
+    - shell: /bin/bash
+```
+- vagrant@tmaster:/srv/salt$ `sudo salt '*' state.apply states.weather_api`
+- Ctrl + C
+- `cd home/vagrant/spotify-flask-app/`
+- `source venv/bin/activate`
+- `python app.py`
+
+Lopputulos ei ollut se mitä haluttiin, että yhdellä sls tiedostolla lähtisi käyntiin molemmat, kokein laittaa yhden tiedoston sisään molemmat niin tämän jälkeen en saanut enään auki koko 127.0.0.1 sivustoa.
+
+Projekti tehty siihen pisteeseen mihin ollaan pystytty 
+- ![image](https://github.com/user-attachments/assets/b0029c86-7138-4e47-bd0c-ed7a03250804)
+
+
+
+
