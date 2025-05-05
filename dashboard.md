@@ -96,10 +96,142 @@ Luomisen jälkeen otin talteen Client ID ja Client Secret,
 
 ## Flask
 
-- Ihan ensimmäiseksi vagrantin ssh yhteydellä kun olin tmaster koneella kokeilin `ping goole.com` sen vuoksi, että kyseinen ottaa ulospäin yhteyden. Tämän jälkeen `sudo apt update`
+- Ihan ensimmäiseksi vagrantin ssh yhteydellä kun olin tmaster koneella kokeilin `ping goole.com` sen vuoksi, että kyseinen ottaa ulospäin yhteyden. Tämän jälkeen `sudo apt update` ja uusi kansio `mkdir spotify-flask-app`
 
-vagrant@tmaster:~$ mkdir spotify-flask-app
-vagrant@tmaster:~$ cd spotify-flask-app
-vagrant@tmaster:~/spotify-flask-app$
+Kansio oli valmis oli aika alkaa rakentaa, 
+- `sudo apt install python3.11-venv`
+- `python3.11 -m venv venv` [Create a virtualenv and activate it:](https://github.com/pallets/flask/tree/main/examples/tutorial#:~:text=Create%20a%20virtualenv,venv/bin/activate)
+- `source venv/bin/activate`
+- `pip install flask spotipy python-dotenv` asennetenaan tarvittavat kirjastot
+- `nano .env`
+  
+![image](https://github.com/user-attachments/assets/a1e8244e-083c-4df7-a9b6-9f8d23e9f033)
+- tiedostoon lisätty aikaisemmin saatu client id sekä client secret, sekä spotify kohdassa oleva Redirect URIs on myös saatu paikalleen,
 
+Alustus oli nyt tehty, tämän jälkeen aloin tekemään flaskin ja spotifyn yhteyttä. Ohjeistus tähän kohtaan saatu [Display currently playing Song with Spotipy API in Flask.(Soni Kirtan)](https://kirtansoni.medium.com/display-currently-playing-song-with-spotipy-api-in-flask-f0139e63e8bc)
 
+- `nano app.py`
+  
+ ```yaml
+from flask import Flask, redirect, request, session, url_for, jsonify
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+app = Flask(__name__)
+app.secret_key = os.urandom(24)
+
+SCOPE = 'user-read-currently-playing'
+
+sp_oauth = SpotifyOAuth(
+    scope=SCOPE,
+    client_id=os.getenv("SPOTIPY_CLIENT_ID"),
+    client_secret=os.getenv("SPOTIPY_CLIENT_SECRET"),
+    redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI"),
+    show_dialog=True,
+    cache_path=".cache"  # tallentaa tokenin tiedostoon
+)
+
+@app.route('/')
+def login():
+    auth_url = sp_oauth.get_authorize_url()
+    return redirect(auth_url)
+
+@app.route('/callback')
+def callback():
+    code = request.args.get('code')
+    token_info = sp_oauth.get_access_token(code)
+    session['token_info'] = token_info
+    return redirect('/currently-playing')
+
+@app.route('/currently-playing')
+def currently_playing():
+    token_info = session.get('token_info', None)
+    if not token_info:
+        return redirect('/')
+    
+    sp = spotipy.Spotify(auth=token_info['access_token'])
+    current = sp.current_playback()
+    if current and current['is_playing']:
+        data = {
+            'track': current['item']['name'],
+            'artist': current['item']['artists'][0]['name'],
+            'album': current['item']['album']['name'],
+            'image': current['item']['album']['images'][0]['url']
+        }
+        return jsonify(data)
+    return jsonify({'message': 'Nothing playing'})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+ ```
+Tämän jälkeen päätin tehdä yksinkertaisen etusivun flaskille,
+
+- `mkdir templates`
+- `nano templates/index.html`
+
+```yaml
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spotify Currently Playing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 60px;
+        }
+        #cover {
+            width: 300px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 Nyt soi Spotifyssa</h1>
+    <div id="track-info">
+        <img id="cover" src="" alt="Album Cover">
+        <h2 id="song"></h2>
+        <p id="artist"></p>
+    </div>
+
+    <script>
+        async function fetchTrack() {
+            try {
+                const response = await fetch('/currently-playing');
+                const data = await response.json();
+
+                if (data.is_playing) {
+                    document.getElementById('cover').src = data.album_cover;
+                    document.getElementById('song').textContent = data.track;
+                    document.getElementById('artist').textContent = data.artist;
+                } else {
+                    document.getElementById('song').textContent = "Ei soittoa juuri nyt 🎧";
+                    document.getElementById('artist').textContent = "";
+                    document.getElementById('cover').src = "";
+                }
+            } catch (error) {
+                console.error('Virhe noudettaessa kappaletta:', error);
+            }
+        }
+
+        setInterval(fetchTrack, 5000);
+        fetchTrack();
+    </script>
+</body>
+</html>
+```
+
+Seuraavaksi oli aika tehdä muutoksia vagrant fileen, 
+```yaml
+config.vm.define "tmaster", primary: true do |tmaster|
+    tmaster.vm.provision :shell, inline: $master
+    tmaster.vm.network "private_network", ip: "192.168.12.3"
+    tmaster.vm.hostname = "tmaster"
+
+    tmaster.vm.network "forwarded_port", guest: 5000, host: 5000  ◀️ #Lisätty portti
+```
