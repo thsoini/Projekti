@@ -554,7 +554,7 @@ Tässä vaiheessa kumminkin kävin katsomassa tehtävänantoa uudelleen kello on
 
 Alkoi tuntumaan, että tässä projektissa ei ole tarpeeksi näyttöä kyseiseen.
 
-
+Tässä vielä kyseisestä video miten, se reagoi. [Youtube Video](https://www.youtube.com/watch?v=eIPmj_zA3mQ&ab_channel=TommySoini)
 
 # Lähteet
 
