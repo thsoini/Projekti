@@ -139,16 +139,16 @@ init.sls viimeinen ajo
 Palvelut ovat nyt käynnissä aika selvittää, toimivatko ne verkkoselaimessa.
 
 ## Node Exporter
-- ![image](https://github.com/user-attachments/assets/111a155f-fa91-44c6-9646-0d6c884f3ca5)
-- ![image](https://github.com/user-attachments/assets/d684c122-9592-47ef-8195-103844fe1347)
+ ![image](https://github.com/user-attachments/assets/111a155f-fa91-44c6-9646-0d6c884f3ca5)
+ ![image](https://github.com/user-attachments/assets/d684c122-9592-47ef-8195-103844fe1347)
 
 ## Prometheus
-- ![image](https://github.com/user-attachments/assets/041203a5-f039-447d-a9ea-19c1d5cf1158)
-- ![image](https://github.com/user-attachments/assets/ab49a18f-3985-4138-9310-c46ae12847e4)
+ ![image](https://github.com/user-attachments/assets/041203a5-f039-447d-a9ea-19c1d5cf1158)
+ ![image](https://github.com/user-attachments/assets/ab49a18f-3985-4138-9310-c46ae12847e4)
 
 ## Grafana
-- ![image](https://github.com/user-attachments/assets/55ff236c-7b89-4f66-a347-a310d4c682f8)
-- ![image](https://github.com/user-attachments/assets/481867c2-b373-4ddf-9e84-127062c96dfd)
+ ![image](https://github.com/user-attachments/assets/55ff236c-7b89-4f66-a347-a310d4c682f8)
+ ![image](https://github.com/user-attachments/assets/481867c2-b373-4ddf-9e84-127062c96dfd)
 
 
 # Lähteet
