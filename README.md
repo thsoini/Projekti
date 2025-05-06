@@ -3,6 +3,8 @@
 Itse projekti kokonaan -> https://github.com/thsoini/Projekti/blob/main/spotfy%2Bweatherapi%2Bflask.md
 
 Tämän projektin idea sai alkunsa inspiroivasta Raspberry Pi -pohjaisesta “Now Playing” -projektista, mutta koska käytettävissä ei ollut fyysistä Raspberry Pi:tä tai siihen liittyviä oheislaitteita, päätettiin toteutus tehdä virtuaalisesti Vagrant-ympäristössä. Projektissa rakennettiin Debian-pohjainen järjestelmä, jossa on yksi Salt-master ja kaksi Salt-minionia. Tavoitteena oli kehittää Flask-pohjainen web-sovellus, joka näyttää Spotifyssa parhaillaan soivan kappaleen sekä ajankohtaisen sään Helsingin alueelta. Toteutuksessa hyödynnettiin mm. Spotipy-kirjastoa, OpenWeather API:a ja SaltStackin automaatiota palvelujen hallintaan.
+[Demo lopputuloksesta](https://www.youtube.com/watch?v=eIPmj_zA3mQ&ab_channel=TommySoini)
+
 
 ![image](https://github.com/user-attachments/assets/0c57895c-f078-4d43-b5f3-47265e6f11d7)
 
