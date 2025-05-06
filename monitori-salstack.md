@@ -149,3 +149,19 @@ Palvelut ovat nyt käynnissä aika selvittää, toimivatko ne verkkoselaimessa.
 ## Grafana
 - ![image](https://github.com/user-attachments/assets/55ff236c-7b89-4f66-a347-a310d4c682f8)
 - ![image](https://github.com/user-attachments/assets/481867c2-b373-4ddf-9e84-127062c96dfd)
+
+
+# Lähteet
+
+[Kurssi: Palvelinten Hallinta. Tero Karvinen](https://terokarvinen.com/palvelinten-hallinta/)
+[Devops With Mike. How to Configure Prometheus yaml file | Prometheus Tutorials | Part 4](https://www.youtube.com/watch?v=BD4I09F9jxU&t=190s&ab_channel=DevopsWithMike)
+
+[Prometheus. Installation](https://prometheus.io/docs/prometheus/latest/installation/)
+
+[howtoforge. Installing Prometheus and Node Exporter](https://www.howtoforge.com/how-to-install-prometheus-and-node-exporter-on-debian-12/#:~:text=the%20Prometheus%20server.-,Installing%20Prometheus%20and%20Node%20Exporter,-Prometheus%20is%20an)
+
+[Grafana](https://grafana.com/)
+
+[Prometheus](https://prometheus.io/)
+
+[Node Exporter](https://prometheus.io/docs/guides/node-exporter/)
