@@ -1,6 +1,6 @@
 # Projekti 1. Dashboard : Spotify "tämän hetkinen kappale" & Sää yhdellä silmäyksellä
 
-Itse projekti kokonaan -> https://github.com/thsoini/Projekti/blob/main/monitori-salstack.md
+Itse projekti kokonaan -> https://github.com/thsoini/Projekti/blob/main/spotfy%2Bweatherapi%2Bflask.md
 
 Tämän projektin idea sai alkunsa inspiroivasta Raspberry Pi -pohjaisesta “Now Playing” -projektista, mutta koska käytettävissä ei ollut fyysistä Raspberry Pi:tä tai siihen liittyviä oheislaitteita, päätettiin toteutus tehdä virtuaalisesti Vagrant-ympäristössä. Projektissa rakennettiin Debian-pohjainen järjestelmä, jossa on yksi Salt-master ja kaksi Salt-minionia. Tavoitteena oli kehittää Flask-pohjainen web-sovellus, joka näyttää Spotifyssa parhaillaan soivan kappaleen sekä ajankohtaisen sään Helsingin alueelta. Toteutuksessa hyödynnettiin mm. Spotipy-kirjastoa, OpenWeather API:a ja SaltStackin automaatiota palvelujen hallintaan.
 
@@ -12,8 +12,7 @@ Tämän projektin idea sai alkunsa inspiroivasta Raspberry Pi -pohjaisesta “No
 
 # Projekti 2. Monitorointipinon käyttöönotto SaltStackilla
 
-Itse projekti kokonaan -> https://github.com/thsoini/Projekti/blob/main/spotfy%2Bweatherapi%2Bflask.md
-
+Itse projekti kokonaan -> https://github.com/thsoini/Projekti/blob/main/monitori-salstack.md
 
 Johdanto
 Tässä projektissa otetaan käyttöön valvontapino, joka koostuu seuraavista komponenteista:
