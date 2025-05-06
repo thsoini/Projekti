@@ -10,8 +10,8 @@ Tavoitteena on:
 
 Aloitus
 
-sudo mkdir -p /srv/salt/monitoring/files
-sudo nano top.sls
+`sudo mkdir -p /srv/salt/monitoring/files`
+`sudo nano top.sls`
 - Sisältö
 ```yaml
 base:
@@ -19,8 +19,8 @@ base:
     - monitoring
 ```
 
-cd /srv/salt/monitoring/files/
-sudo nano prometheus.yml
+`cd /srv/salt/monitoring/files/`
+`sudo nano prometheus.yml`
 - Sisältö [Devops With Mike. How to Configure Prometheus yaml file | Prometheus Tutorials | Part 4](https://youtu.be/BD4I09F9jxU?t=190)
 
 ```yaml
@@ -38,7 +38,7 @@ scrape_configs:
 ```
 
 
-sudo nano init.sls
+`sudo nano init.sls`
 -Sisältö [Installation](https://prometheus.io/docs/prometheus/latest/installation/)
 ```yaml
 prometheus-install:
@@ -66,7 +66,7 @@ prometheus-service:
 
 
 
-sudo nano init.sls
+`sudo nano init.sls`
 -Sisältöä lisätty. 
 [Installing Prometheus and Node Exporter](https://www.howtoforge.com/how-to-install-prometheus-and-node-exporter-on-debian-12/#:~:text=the%20Prometheus%20server.-,Installing%20Prometheus%20and%20Node%20Exporter,-Prometheus%20is%20an)
 [Grafana Labs. Install Grafana on Debian or Ubuntu](https://grafana.com/docs/grafana/latest/setup-grafana/installation/debian/)
