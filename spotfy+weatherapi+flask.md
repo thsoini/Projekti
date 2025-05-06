@@ -554,3 +554,22 @@ Tässä vaiheessa kumminkin kävin katsomassa tehtävänantoa uudelleen kello on
 
 Alkoi tuntumaan, että tässä projektissa ei ole tarpeeksi näyttöä kyseiseen.
 
+
+
+# Lähteet
+
+[Kurssi Palvelinten Hallinta Tero Karvinen](https://terokarvinen.com/palvelinten-hallinta/)
+
+[Now Playing: My Raspberry Pi Weekend Project](https://chorus.fm/features/articles/now-playing-my-raspberry-pi-weekend-project/)
+
+[Salt Project - Install Salt DEBs](https://docs.saltproject.io/salt/install-guide/en/latest/topics/install-by-operating-system/linux-deb.html)
+
+[Spotify for Developers](https://developer.spotify.com/)
+
+[Github(davidism) Create a virtualenv and activate it](https://github.com/pallets/flask/tree/main/examples/tutorial)
+
+[Kirtan Soni. Display currently playing Song with Spotipy API in Flask.](https://kirtansoni.medium.com/display-currently-playing-song-with-spotipy-api-in-flask-f0139e63e8bc)
+
+[Wojtekszczerbinski. Weather Forecast App using Python (Flask) and the OpenWeather API ☀️- Project 13](https://medium.com/@wojtekszczerbinski/project-13-weather-forecast-app-using-python-flask-and-the-openweather-api-%EF%B8%8F-746a49cde95a)
+
+[Weather API](https://openweathermap.org/api)
