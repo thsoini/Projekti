@@ -130,6 +130,12 @@ grafana-service:
 Mitä on tähän mennessä tullut?
 - ![image](https://github.com/user-attachments/assets/435ea4a0-5e2b-4057-9e4c-e2aa825aa8dd)
 
+init.sls viimeinen ajo 
+
+![image](https://github.com/user-attachments/assets/4551b29e-99de-4cb0-844d-d7378171cbc1)
+
+
+
 Palvelut ovat nyt käynnissä aika selvittää, toimivatko ne verkkoselaimessa.
 
 ## Node Exporter
