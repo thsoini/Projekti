@@ -1,6 +1,6 @@
 # Johdanto
 
-Kokonaan idea lähti toisen henkilön tekemästä projektista, mutta ongelma oli se, että tällä hetkellä ei ole Rasperry PI:tä ja projektiin liittyviä oheistuotteita, [Now Playing: My Raspberry Pi Weekend Project](https://chorus.fm/features/articles/now-playing-my-raspberry-pi-weekend-project/) . Projektissa on luotu vagrant ympäristö, debian/bookworm64 ja salt-master ja 2 salt-minion konetta, flask, python.
+Idea lähti kokonaan toisen henkilön tekemästä projektista. Ongelmaksi muodostui kuitenkin se, että minulla ei tällä hetkellä ole Raspberry Pi:tä tai projektiin liittyviä oheistarvikkeita..., [Now Playing: My Raspberry Pi Weekend Project](https://chorus.fm/features/articles/now-playing-my-raspberry-pi-weekend-project/) . Projektissa on luotu vagrant ympäristö, debian/bookworm64 ja salt-master ja 2 salt-minion konetta, flask, python.
 
 Kyseisen projektin idea on näyttää flaskin kautta nettisivu missä näkyy mitä tällä hetkellä kuuntelen spotifyssa, ja myös yrittää saada salt minion lisäämään tämänhetkisen sään samalle, nettisivustolle.
 
@@ -9,7 +9,7 @@ Kyseisen projektin idea on näyttää flaskin kautta nettisivu missä näkyy mit
 
 ## Vagrant
 
-Aloitin kokonaan tekemällä uuden kansion Windowsille, ja käytin komentokehotetta komenollan `mkdir tilastokehys` tein kansion `cd tilastokehys` tämän jälkeen loin vagrantfilen käyttämällä `vagrant init`. 
+Aloitin luomalla uuden kansion Windowsille ja käytin komentokehotetta: `mkdir tilastokehys`. Siirryin kansioon komennolla `cd tilastokehys`, ja tämän jälkeen loin Vagrantfilen komennolla `vagrant init`
 
 - Vagrant filen tein tämän näköiseksi
 ```yaml
@@ -89,7 +89,7 @@ Ping testi
 
 
 ## Spotify 
-Spotify ohjelma pitää luoda erikseen spotifyn sivustolla [Spotify for Developers](https://developer.spotify.com/dashboard), painoin painiketta Create app 
+Spotify-sovellus täytyy luoda erikseen Spotifyn kehittäjäsivustolla [Spotify for Developers](https://developer.spotify.com/dashboard), painoin painiketta Create app 
 
 ![image](https://github.com/user-attachments/assets/a04c6e83-3104-4b35-828c-b8a617714c86)
 
@@ -467,7 +467,7 @@ if __name__ == '__main__':
 
 ```
   
-Tallennuksen jälkeen, oli aika käynnistää palvelu ja kokeilla toimiiko se edes,
+Tallennuksen jälkeen oli aika käynnistää palvelu ja testata, toimiiko se oikein.
 - `source venv/bin/activate`
 - `pip install python-dotenv`
 - `python weather_api.py`
