@@ -421,7 +421,7 @@ Ensimmäiseksi piti saada avain [OpenWeather](https://openweathermap.org/api)
 - Avain talteen
 
 
-Näiden jälkeen avasin komento kehotteen ja otin yhteyden ssh data-collector-1 koneelle
+Näiden jälkeen avasin komentokehotteen ja otin yhteyden ssh data-collector-1 koneelle
 - `vagrant shh data-collector-1`
 
 Tämän jälkeen oli aika alkaa rakentaa weather apia flaskiin
