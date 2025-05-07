@@ -549,7 +549,7 @@ Lopputulos ei ollut se mitä haluttiin, että yhdellä sls tiedostolla lähtisi 
 Projekti tehty siihen pisteeseen mihin ollaan pystytty 
 - ![image](https://github.com/user-attachments/assets/b0029c86-7138-4e47-bd0c-ed7a03250804)
 
-Tässä vaiheessa kumminkin kävin katsomassa tehtävänantoa uudelleen kello on 13:03 6.5.2025, 
+Tässä vaiheessa kumminkin kävin katsomassa tehtävänantoa uudelleen.....
 - ![image](https://github.com/user-attachments/assets/eed48027-5894-40a7-bbeb-aeaea04a6049)
 
 Alkoi tuntumaan, että tässä projektissa ei ole tarpeeksi näyttöä kyseiseen.
